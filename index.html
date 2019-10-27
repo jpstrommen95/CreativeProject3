@@ -17,9 +17,10 @@
         <div id="root" class="container">
 
             <h1 class="title">Poke Pages</h1>
+            <h1 class="subtitle is-6">Displays a paginated list of pokemon.</h1>
             <div>
                 <p v-if="loading">Loading...</p>
-                <poke-page v-else :detail-list="detailList"></poke-page>
+                <poke-page v-else :detail-list="detailList" v-on:inc_offset="curr_offset += pokemonPerPage" @dec_offset="curr_offset -= pokemonPerPage"></poke-page>
             </div>
 
         </div>

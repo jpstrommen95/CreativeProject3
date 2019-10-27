@@ -42,11 +42,25 @@ window.Vue.component("poke-info", {
 
 window.Vue.component("page-nav", {
 
+    data() {
+        let myData = {
+            vueRoot: this.$root,
+        };
+
+        console.log(myData);
+        return myData;
+
+    },
+
     template: `
-    <nav class="pagination" role="navigation" aria-label="pagination">
-      <a class="pagination-previous">Previous</a>
-      <a class="pagination-next" @click="this.$root.getPokePage(this.$root.nextURL)">Next page</a>
-      <ul class="pagination-list">
+    <nav class="pagination" role="navigation" aria-label="pagination"  @incOffset="$emit('incOffset')">
+      <a class="pagination-previous" v-if="(this.$root.curr_offset > 0)"  @click.prevent="$emit('dec_offset')">Previous page</a>
+      <a class="pagination-next" v-if="(this.$root.curr_offset < this.$root.totalPokemon)" @click="$emit('inc_offset')">Next page</a>
+    </nav>
+    `,
+
+    /*
+    <ul class="pagination-list">
         <li>
           <a class="pagination-link is-current" aria-label="Goto page 1">1</a>
         </li>
@@ -69,8 +83,7 @@ window.Vue.component("page-nav", {
           <a class="pagination-link" aria-label="Goto page 86">86</a>
         </li>
       </ul>
-    </nav>
-    `,
+    */
 });
 
 window.Vue.component("poke-page", {
@@ -78,7 +91,7 @@ window.Vue.component("poke-page", {
 
     template: `
     <div>
-        <page-nav></page-nav>
+        <page-nav v-on:inc_offset="$emit('inc_offset')" @dec_offset="$emit('dec_offset')"></page-nav>
         <br>
         <poke-info v-for="poke in detailList" :info="poke" :key="poke.name"></poke-info>
     </div>
@@ -97,7 +110,7 @@ let app = new window.Vue({
 
         loading: false,
 
-        currPage: 0,
+        curr_offset: 0,
         nextURL: "",
 
         pokelist: [],
@@ -110,16 +123,20 @@ let app = new window.Vue({
     },
 
     watch: {
-
+        curr_offset(value, oldvalue) {
+            this.getPokePage(this.curr_offset, this.pokemonPerPage);
+        },
     },
 
     created() {
-        this.getPokePage("https://pokeapi.co/api/v2/pokemon?offset=0&limit=" + this.pokemonPerPage);
+        this.getPokePage(this.curr_offset, this.pokemonPerPage);
     },
 
     methods: {
 
-        async getPokePage(URL) {
+        async getPokePage(offset, limit) {
+            console.log("Entered getPokePage()");
+            let URL = "https://pokeapi.co/api/v2/pokemon?offset=" + offset + "&limit=" + limit;
             try {
                 this.loading = true;
                 // const response = await window.axios.get('https://pokeapi.co/api/v2/pokemon');
@@ -158,7 +175,6 @@ let app = new window.Vue({
                     });
             });
         },
-
 
     },
 
