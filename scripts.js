@@ -42,20 +42,10 @@ window.Vue.component("poke-info", {
 
 window.Vue.component("page-nav", {
 
-    data() {
-        let myData = {
-            vueRoot: this.$root,
-        };
-
-        console.log(myData);
-        return myData;
-
-    },
-
     template: `
-    <nav class="pagination" role="navigation" aria-label="pagination"  @incOffset="$emit('incOffset')">
+    <nav class="pagination" role="navigation" aria-label="pagination">
       <a class="pagination-previous" v-if="(this.$root.curr_offset > 0)"  @click.prevent="$emit('dec_offset')">Previous page</a>
-      <a class="pagination-next" v-if="(this.$root.curr_offset < this.$root.totalPokemon)" @click="$emit('inc_offset')">Next page</a>
+      <a class="pagination-next" v-if="(this.$root.curr_offset < this.$root.totalPokemon)" @click.prevent="$emit('inc_offset')">Next page</a>
     </nav>
     `,
 
@@ -91,7 +81,7 @@ window.Vue.component("poke-page", {
 
     template: `
     <div>
-        <page-nav v-on:inc_offset="$emit('inc_offset')" @dec_offset="$emit('dec_offset')"></page-nav>
+        <page-nav @inc_offset="$emit('inc_offset')" @dec_offset="$emit('dec_offset')"></page-nav>
         <br>
         <poke-info v-for="poke in detailList" :info="poke" :key="poke.name"></poke-info>
     </div>
